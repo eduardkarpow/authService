@@ -13,7 +13,7 @@ func Load() *Config {
 	return &Config{
 		GRPCPort:  getEnv("GRPC_PORT", "50051"),
 		JWTSecret: getEnv("JWT_SECRET", "secret_password"),
-		DBConnStr: getEnv("DB_CONN", "postgres://user:pass@pgsql:5432/auth?sslmode=disable"),
+		DBConnStr: getEnv("DB_CONN", "postgres://user:pass@postgres:5432/auth?sslmode=disable"),
 		RedisUrl:  getEnv("REDIS_URL", "redisL:6379"),
 	}
 }
