@@ -18,8 +18,11 @@ type User struct {
 type UserRepositoryInterface interface {
 	Exists(ctx context.Context, email string) (bool, error)
 	Save(ctx context.Context, user *User) error
+	FindByEmail(ctx context.Context, email string) (*User, error)
 }
 
 type UserServiceInterface interface {
 	Register(ctx context.Context, user authv1.RegisterRequest) (*Tokens, error)
+	Login(ctx context.Context, user authv1.LoginRequest) (*Tokens, error)
+	generateTokens(ctx context.Context, user *User) (*authv1.TokensResponse, error)
 }

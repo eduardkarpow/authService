@@ -15,13 +15,18 @@ type UserGrpcHandler struct {
 
 func (h *UserGrpcHandler) Register(ctx context.Context, request *authv1.RegisterRequest) (*authv1.TokensResponse, error) {
 	resp, err := h.userService.Register(ctx, request)
-	fmt.Println(err)
+	if err != nil {
+		fmt.Println(err)
+	}
 	return resp, err
 }
 
 func (h *UserGrpcHandler) Login(ctx context.Context, request *authv1.LoginRequest) (*authv1.TokensResponse, error) {
-	//TODO implement me
-	panic("implement me")
+	resp, err := h.userService.Login(ctx, request)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return resp, err
 }
 
 func (h *UserGrpcHandler) Refresh(ctx context.Context, request *authv1.RefreshRequest) (*authv1.TokensResponse, error) {

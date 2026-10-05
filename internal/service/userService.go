@@ -46,7 +46,30 @@ func (us *UserService) Register(ctx context.Context, user *authv1.RegisterReques
 	if err != nil {
 		return &authv1.TokensResponse{}, err
 	}
-	tokens, err := us.s.GenerateTokens(userInner.ID)
+	return us.generateTokens(ctx, userInner)
+}
+
+func (us *UserService) Login(ctx context.Context, request *authv1.LoginRequest) (*authv1.TokensResponse, error) {
+	exists, err := us.r.Exists(ctx, request.Email)
+	if err != nil {
+		return &authv1.TokensResponse{}, err
+	}
+	if !exists {
+		return &authv1.TokensResponse{}, errors.New("user does not exists")
+	}
+	user, err := us.r.FindByEmail(ctx, request.Email)
+	if err != nil {
+		return &authv1.TokensResponse{}, err
+	}
+	err = us.s.VerifyPassword(request.Password, user.Password)
+	if err != nil {
+		return &authv1.TokensResponse{}, err
+	}
+	return us.generateTokens(ctx, user)
+}
+
+func (us *UserService) generateTokens(ctx context.Context, user *domain.User) (*authv1.TokensResponse, error) {
+	tokens, err := us.s.GenerateTokens(user.ID)
 	if err != nil {
 		return &authv1.TokensResponse{}, err
 	}
@@ -55,7 +78,7 @@ func (us *UserService) Register(ctx context.Context, user *authv1.RegisterReques
 		return &authv1.TokensResponse{}, err
 	}
 	session := &domain.Session{
-		UserId:    userInner.ID,
+		UserId:    user.ID,
 		TokenHash: tokenHash,
 		ExpiresAt: tokens.ExpiresIn,
 	}
