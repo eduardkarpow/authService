@@ -28,6 +28,8 @@ type TokenRepositoryInterface interface {
 
 type SecurityServiceInterface interface {
 	HashPassword(password string) (string, error)
-	GenerateAccessToken(userId string) (string, error)
-	GenerateRefreshToken(userId string) (string, error)
+	GenerateTokens(userId string) (Tokens, error)
+	generateToken(userId string, expiry int64) (string, error)
+	VerifyPassword(password string) error
+	getSha256(password string) (string, error)
 }

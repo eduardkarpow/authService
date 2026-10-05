@@ -45,3 +45,17 @@ func (ur *UserRepository) Save(ctx context.Context, user *domain.User) error {
 	}
 	return nil
 }
+
+func (ur *UserRepository) FindByEmail(ctx context.Context, email string) (*domain.User, error) {
+	query := `
+		SELECT id, email, password, username, created_at
+		FROM users
+		WHERE email = $1;
+	`
+	user := &domain.User{}
+	err := ur.pool.QueryRow(ctx, query, email).Scan(&user.ID, &user.Email, &user.Password, &user.Name, &user.CreatedAt)
+	if err != nil {
+		return nil, fmt.Errorf("error finding user by email: %w", err)
+	}
+	return user, nil
+}
